@@ -1,0 +1,9 @@
+
+		org	0c000h
+
+		ld	de,message
+		ld	c,9
+		call	5
+		ret
+
+message:	db	"Hello from Assembler!", 0dh, 0ah, '$'

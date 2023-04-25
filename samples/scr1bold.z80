@@ -1,0 +1,49 @@
+screen_mode   equ     #fcaf     ; Current screen mode
+
+              org     #c000
+
+              ld      a,1         ; SCREEN 1
+              ld      (#fcaf),a
+              ld      ix,#5f
+              ld      iy,(#fcc0)
+              call    #1c         ; Inter-slot call
+
+beef_up_font:
+              di
+              ld      bc,#800     ; Byte counter
+              ld      hl,0        ; Source and destination address in VRAM
+
+transform_loop:
+              call    setup_read_addr
+              in      a,(#98)     ; Read byte from VRAM address
+              ld      d,a
+              rrc     d
+              or      d           ; a = a / 2
+
+              call    setup_write_addr
+              out     (#98),a     ; Write [a] to VRAM
+
+              inc     hl          ; Increment the VRAM pointer
+              dec     bc          ; Decrement the byte counter
+              ld      a,b
+              or      c           ; Loop if BC is not zero
+              jr      nz,transform_loop
+              ei
+              ret
+;------------------------------------------------------------------------------
+setup_read_addr:
+              ld      a,l
+              out     (#99),a     ; Send low byte to VDP
+              ld      a,h         ; Note: no special bit is set to indicate READ
+              out     (#99),a     ; Send high byte to VDP
+              ret
+;------------------------------------------------------------------------------
+setup_write_addr:
+              push    af          ; Save byte in [a]
+              ld      a,l
+              out     (#99),a     ; Send low byte to VDP
+              ld      a,h
+              or      %1000000    ; Set bit 6 in high byte to indicate write
+              out     (#99),a
+              pop     af
+              ret
