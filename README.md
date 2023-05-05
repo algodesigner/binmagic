@@ -31,5 +31,8 @@ The binary is fully embedded into the DATA section of the self-contained program
 60 DEF USR=&HC000:A=USR(0)
 ```
 
+## Compatibility with Microsoft BASIC-80
 
+The BASIC code produced by the utility is compatible with Microsoft BASIC-80 Rev. 5.21.
 
+Please see `c000str.bas` in the `sample` directory.
