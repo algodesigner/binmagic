@@ -42,7 +42,10 @@ class BinMagic:
     def __init__(self, infile, outfile, addr):
         self.infile = infile;
         self.outfile = outfile;
-        # TODO: Validate the address
+        if len(addr) > 4 or \
+            not all(c in "0123456789abcdefABCDEF" for c in addr):
+                print("Invalid address %s" % addr, file=sys.stderr)
+                sys.exit(1)
         self.addr = addr.upper();
         self.blocks = 34;
         self.line = 0;
