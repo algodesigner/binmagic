@@ -45,7 +45,7 @@ class BinMagic:
         if len(addr) > 4 or \
             not all(c in "0123456789abcdefABCDEF" for c in addr):
                 print("Invalid address %s" % addr, file=sys.stderr)
-                sys.exit(1)
+                sys.exit(2)
         self.addr = addr.upper();
         self.blocks = 34;
         self.line = 0;
