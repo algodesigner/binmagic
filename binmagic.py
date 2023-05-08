@@ -36,6 +36,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+import os
 
 class BinMagic:
 
@@ -78,20 +79,25 @@ class BinMagic:
         self.wfile = open(self.outfile, "w", newline='\r\n')
         i = 0
         open_line = True
-        for b in read_bytes(self.infile):
-            if open_line:
-                self.__open_dataline()
-                open_line = False;
-            self.__out("%02X" % b, end="")
-            i += 1
-            if i % self.blocks == 0:
-                self.__out()
-                open_line = True
-        if not open_line:
-                self.__out()
-        self.__append_loader()
-        self.wfile.close();
-
+        try:
+            for b in read_bytes(self.infile):
+                if open_line:
+                    self.__open_dataline()
+                    open_line = False;
+                self.__out("%02X" % b, end="")
+                i += 1
+                if i % self.blocks == 0:
+                    self.__out()
+                    open_line = True
+            if not open_line:
+                    self.__out()
+            self.__append_loader()
+            self.wfile.close();
+        except FileNotFoundError:
+            self.wfile.close();
+            os.remove(self.outfile);
+            print("File not found: %s" % self.infile, file=sys.stderr)
+            sys.exit(3);
 
 def read_bytes(filename, chunksize=8192):
     with open(filename, "rb") as f:
